@@ -1,0 +1,46 @@
+import 'package:bmob_plugin/bmob/sdk/sdk.dart';
+import 'package:bmob_plugin/bmob/table/tables.dart';
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'bmob_pointer.dart';
+
+part 'bmob_relation.g.dart';
+
+@JsonSerializable()
+class BmobRelation extends Equatable{
+  factory BmobRelation.fromJson(Map<String, dynamic> json) =>
+      _$BmobRelationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BmobRelationToJson(this);
+
+  @JsonKey(name: "__op")
+  String op;
+
+  //关联关系列表
+  List<Map<String, dynamic>> objects;
+
+  BmobRelation() {
+    objects = List();
+  }
+
+  //添加某个关联关系
+  void add(BmobObject value) {
+    op = "AddRelation";
+    BmobPointer bmobPointer = BmobPointer();
+    bmobPointer.className = BmobUtils.getTableName(value);
+    bmobPointer.objectId = value.objectId;
+    objects.add(bmobPointer.toJson());
+  }
+
+  //移除某个关联关系
+  void remove(BmobObject value) {
+    op = "RemoveRelation";
+    BmobPointer bmobPointer = BmobPointer();
+    bmobPointer.className = BmobUtils.getTableName(value);
+    bmobPointer.objectId = value.objectId;
+    objects.add(bmobPointer.toJson());
+  }
+
+  @override
+  List<Object> get props => [op, objects];
+}
